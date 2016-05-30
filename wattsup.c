@@ -250,7 +250,6 @@ static struct wu_field wu_fields[wu_num_fields] = {
 		.name	= "power-cycle",
 		.descr	= "Indication of power cycle",
 	},
-
 };
 
 
@@ -1564,6 +1563,7 @@ static int wu_show_help(int unused)
 	printf("\n");
 	printf("<value> specifies which of these to print out (default: ALL)\n");
 	for (i = 0; i < wu_num_fields; i++) {
+		if (wu_fields[i].name == NULL) break;
 		printf("%12s -- %s\n", wu_fields[i].name, wu_fields[i].descr);
 	}
 	printf("\n");
