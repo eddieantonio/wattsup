@@ -902,7 +902,7 @@ static int wu_read_data(int fd)
 				continue;
 			}
 			perr("Blech. Giving up on read");
-			break;
+			abort();
 		} else if (retry)
 			retry = 0;
 
