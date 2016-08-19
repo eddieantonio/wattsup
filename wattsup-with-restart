@@ -6,10 +6,20 @@
 # Based on http://superuser.com/a/223454
 
 # Ensure we shut down the wattsup on a termination signal.
-trap "pkill wattsup; exit" HUP INT TERM
+_term() {
+   kill -TERM "$PID"
+   exit
+}
+
+trap _term HUP INT TERM
 
 RC=1
 while [ $RC -ne 0 ]; do
-   ./wattsup "$@"
+   ./wattsup "$@" &
+   PID=$!
+   wait $PID
    RC=$?
 done
+
+# Reset the terminal handler.
+trap - TERM HUP INT
