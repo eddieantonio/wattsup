@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Since the wattsup is a bit... crashy... this script restarts the app so long
+# as it exits poorly.
+
+# Based on http://superuser.com/a/223454
+
+RC=1
+while [ $RC -ne 0 ]; do
+   ./wattsup "$@"
+   RC=$?
+done
