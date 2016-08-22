@@ -9,7 +9,7 @@
  *
  *	Compiled with:
  *
- *	gcc -O2 -Wall -o wattsup wattsup.c 
+ *	gcc -O2 -Wall -o wattsup wattsup.c
  *
  */
 
@@ -350,12 +350,12 @@ static void print_time(void)
 		else
 			tm = gmtime(&t);
 
-		msg("[%02d:%02d:%02d] ", 
+		msg("[%02d:%02d:%02d] ",
 		    tm->tm_hour, tm->tm_min, tm->tm_sec);
 	}
 }
 
-static void print_packet_filter(struct wu_packet * p, 
+static void print_packet_filter(struct wu_packet * p,
 				int (*filter_ok)(struct wu_packet * p, int i, char * str))
 {
 	char buf[256];
@@ -512,12 +512,12 @@ static int wu_write(int fd, struct wu_packet * p)
 	}
 	p->buf[p->len++] = ';';
 
-	dbg("Writing '%s' (strlen = %d) (len = %d) to device", 
+	dbg("Writing '%s' (strlen = %d) (len = %d) to device",
 	    p->buf, strlen(p->buf), p->len);
 	ret = write(fd, p->buf, p->len);
 	if (ret != p->len)
 		perr("Writing to device");
-	
+
 	return ret >= 0 ? 0 : ret;
 }
 
@@ -527,8 +527,8 @@ static void dump_packet(struct wu_packet * p)
 	int i;
 
 	dbg("Packet - Command '%c' %d parameters", p->cmd, p->count);
-	
-	for (i = 0; i < p->count; i++) 
+
+	for (i = 0; i < p->count; i++)
 		dbg("[%2d] [%20s] = \"%s\"", i, p->label[i], p->field[i]);
 }
 
@@ -540,7 +540,7 @@ static int parse_packet(struct wu_packet * p)
 
 	p->buf[p->len] = '\0';
 
-	dbg("Parsing Packet, Raw buffer is (%d bytes) [%s]", 
+	dbg("Parsing Packet, Raw buffer is (%d bytes) [%s]",
 	    p->len, p->buf);
 
 	s = p->buf;
@@ -575,7 +575,7 @@ static int parse_packet(struct wu_packet * p)
 
 	/*
 	 * Next character is the subcommand, and should be '-'
-	 * Though, it doesn't matter, because we just 
+	 * Though, it doesn't matter, because we just
 	 * discard it anyway.
 	 */
 	next = strchr(s, ',');
@@ -588,7 +588,7 @@ static int parse_packet(struct wu_packet * p)
 	}
 
 	/*
-	 * Next is the number of parameters, 
+	 * Next is the number of parameters,
 	 * which should always be > 0.
 	 */
 	next = strchr(s, ',');
@@ -600,8 +600,8 @@ static int parse_packet(struct wu_packet * p)
 		dbg("Couldn't determine number of parameters");
 		return ret_err(EFAULT);
 	}
-	
-	dbg("Have %d parameter%s (cmd = '%c')", 
+
+	dbg("Have %d parameter%s (cmd = '%c')",
 	    p->count, p->count > 1 ? "s" : "", p->cmd);
 
 	/*
@@ -610,7 +610,7 @@ static int parse_packet(struct wu_packet * p)
 	 *
 	 * The last character was originally a ';', but may have been
 	 * overwritten with a '\0', so we make sure to catch
-	 * that when converting the last parameter. 
+	 * that when converting the last parameter.
 	 */
 	for (i = 0; i < p->count; i++) {
 		next = strpbrk(s, ",;");
@@ -644,7 +644,7 @@ static int wu_read(int fd, struct wu_packet * p)
 
 	FD_ZERO(&read_fd);
 	FD_SET(fd, &read_fd);
-	
+
 	tv.tv_sec = 2;
 	tv.tv_usec = 0;
 
@@ -845,7 +845,7 @@ static int wu_clear(int fd)
 		perr("Clearing memory");
 	else
 		sleep(2);
-	
+
 	/*
 	 * Dummy read
 	 */
@@ -885,7 +885,7 @@ static int wu_read_data(int fd)
 
 	i = 0;
 	while (1) {
-		
+
 		ret = wu_read(fd, &p);
 		if (ret) {
 			if (++retry < wu_max_retry) {
@@ -910,7 +910,7 @@ static int wu_read_data(int fd)
 		num_read++;
 		print_packet_filter(&p, filter_data);
 
-		if (wu_count && (++i == wu_count)) 
+		if (wu_count && (++i == wu_count))
 			break;
 	}
 	return 0;
@@ -930,7 +930,7 @@ static int wu_show_interval(int fd)
 		},
 	};
 	int ret;
-	
+
 	ret = wu_write(fd, &p);
 	if (ret) {
 		perr("Requesting interval");
@@ -948,7 +948,7 @@ static int wu_show_interval(int fd)
 	return 0;
 }
 
-static int wu_write_interval(int fd, unsigned int seconds, 
+static int wu_write_interval(int fd, unsigned int seconds,
 			     unsigned int interval)
 {
 	char str_seconds[wu_param_len];
@@ -1028,7 +1028,7 @@ static int wu_write_mode(int fd, int mode)
 		},
 	};
 	int ret;
-	
+
 	snprintf(str_mode, wu_param_len, "%ud", mode);
 	ret = wu_write(fd, &p);
 	if (ret)
@@ -1086,7 +1086,7 @@ static int wu_show_user(int fd)
 }
 
 
-static int wu_write_user(int fd, unsigned int kwh_cost, 
+static int wu_write_user(int fd, unsigned int kwh_cost,
 			 unsigned int second_tier_cost,
 			 unsigned int second_tier_threshold,
 			 unsigned int duty_cycle_threshold)
@@ -1110,11 +1110,11 @@ static int wu_write_user(int fd, unsigned int kwh_cost,
 	int ret;
 
 	snprintf(str_kwh_cost, wu_param_len, "%ud", kwh_cost);
-	snprintf(str_2nd_tier_cost, wu_param_len, "%ud", 
+	snprintf(str_2nd_tier_cost, wu_param_len, "%ud",
 		 second_tier_cost);
-	snprintf(str_2nd_tier_threshold, wu_param_len, "%ud", 
+	snprintf(str_2nd_tier_threshold, wu_param_len, "%ud",
 		 second_tier_threshold);
-	snprintf(str_duty_cycle_threshold, wu_param_len, "%ud", 
+	snprintf(str_duty_cycle_threshold, wu_param_len, "%ud",
 		 duty_cycle_threshold);
 
 	ret = wu_write(fd, &p);
@@ -1255,7 +1255,7 @@ static int wu_store_debug(int unused)
 static int wu_store_delim(int unused)
 {
 	char * s = wu_option_value(wu_option_delim);
-	
+
 	if (s)
 		wu_delim = s;
 	return 0;
@@ -1451,7 +1451,7 @@ static struct wu_options wu_options[] = {
 	 * W/o that parameter, they print values from the device.
 	 * W/ that parameter, they set that option and read data.
 	 *
-	 * Except when the 'set-only' parameter is used, then the 
+	 * Except when the 'set-only' parameter is used, then the
 	 * parameters are set, then re-read and printed.
 	 */
 	[wu_option_interval] = {
@@ -1532,7 +1532,7 @@ static int wu_show_help(int unused)
 	printf("Usage: %s [<options> ... ] <device> [ <values> ... ]\n",
 	       prog_name);
 	printf("\n");
-	
+
 	printf("<device> is the serial port the device is connected at.\n");
 	printf("\n");
 
@@ -1581,7 +1581,7 @@ static char * wu_option_value(unsigned int index)
 static int wu_check_option_show(int index)
 {
 	/*
-	 * Return 1 if we need to print something out for 
+	 * Return 1 if we need to print something out for
 	 * a particular option.
 	 */
 	if (index < wu_num_options) {
@@ -1660,7 +1660,7 @@ static void make_shortopt(char * str)
 {
 	int i;
 	char * s = str;
-	
+
 	for (i = 0; i < wu_num_options; i++) {
 		*s++ = wu_options[i].shortopt;
 		if (wu_options[i].param)
@@ -1673,7 +1673,7 @@ static void enable_short_option(int c, char * arg)
 	int i;
 
 	/*
-	 * Friggin' getopt_long() will return the 
+	 * Friggin' getopt_long() will return the
 	 * character if we get a short option (e.g. '-h'),
 	 * instead of returning 0 like it does when it
 	 * gets a long option (e.g. "--help"). Ugh.
@@ -1701,17 +1701,17 @@ static int parse_args(int argc, char ** argv)
 		int c;
 		int index;
 
-		c = getopt_long(argc, argv, shortopts, 
+		c = getopt_long(argc, argv, shortopts,
 				longopts, &index);
 		if (c == -1)
 			break;
-		
+
 		switch (c) {
 		case 0:
 			wu_options[index].flag = 1;
 			if (optarg)
 				wu_options[index].value = strdup(optarg);
-			
+
 			printf("long option: val = %c, optarg = %s\n",
 			       wu_options[index].shortopt, optarg);
 			break;
@@ -1726,7 +1726,7 @@ static int parse_args(int argc, char ** argv)
 	}
 
 	/*
-	 * Check for help request now and bail after 
+	 * Check for help request now and bail after
 	 * printing it, if it's set.
 	 */
 	if (wu_check_show(wu_option_help, 0))
@@ -1862,9 +1862,9 @@ int main(int argc, char ** argv)
 
 		if ((ret = wu_start_log()))
 			goto Close;
-	    
+
 		wu_read_data(fd);
-		
+
 		wu_stop_log();
 	}
 Close:
