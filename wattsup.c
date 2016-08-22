@@ -843,12 +843,15 @@ static int wu_clear(int fd)
 	ret = wu_write(fd, &p);
 	if (ret)
 		perr("Clearing memory");
-	else
+	else {
+		perr("Waiting for wattsup to clear memory");
 		sleep(2);
+	}
 
 	/*
 	 * Dummy read
 	 */
+	dbg("Ignoring next read");
 	wu_read(fd, &p);
 	return ret;
 
